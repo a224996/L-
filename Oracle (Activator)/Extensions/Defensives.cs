@@ -6,45 +6,45 @@ using Oracle.Core.Helpers;
 
 namespace Oracle.Extensions
 {
-    internal class Defensives
+    internal static class 防守装备
     {
         private static Menu _mainMenu, _menuConfig;
         private static readonly Obj_AI_Hero Me = ObjectManager.Player;
 
-        public void Initialize(Menu root)
+        public static void Initialize(Menu root)
         {
             Game.OnUpdate += Game_OnGameUpdate;
 
-            _mainMenu = new Menu("Defensives", "dmenu");
-            _menuConfig = new Menu("Defensives Config", "dconfig");
+            _mainMenu = new Menu("防守装备", "dmenu");
+            _menuConfig = new Menu("防守对象", "dconfig");
 
             foreach (var x in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsAlly))
-                _menuConfig.AddItem(new MenuItem("DefenseOn" + x.SkinName, "Use for " + x.SkinName)).SetValue(true);
+                _menuConfig.AddItem(new MenuItem("DefenseOn" + x.SkinName, "使用给 " + x.SkinName)).SetValue(true);
             _mainMenu.AddSubMenu(_menuConfig);
 
-            CreateMenuItem("Randuin's Omen", "Randuins", "selfcount", 40, 40);
-            CreateMenuItem("Seraph's Embrace", "Seraphs",  "selfhealth", 40, 45);
-            CreateMenuItem("Zhonya's Hourglass", "Zhonyas", "selfzhonya", 20, 50);
-            CreateMenuItem("Face of the Mountain", "Mountain", "allyhealth", 20, 45);
-            CreateMenuItem("Locket of Iron Solari", "Locket", "allyhealth", 40, 45);
+            CreateMenuItem("兰顿之兆", "Randuins", "selfcount", 40, 40);
+            CreateMenuItem("炽天使之拥", "Seraphs",  "selfhealth", 40, 45);
+            CreateMenuItem("中亚沙漏", "Zhonyas", "selfzhonya", 20, 50);
+            CreateMenuItem("山岳之容", "Mountain", "allyhealth", 20, 45);
+            CreateMenuItem("索拉里铁盒", "Locket", "allyhealth", 40, 45);
 
-            var tMenu = new Menu("Talisman", "tboost");
-            tMenu.AddItem(new MenuItem("useTalisman", "Use Talisman of Ascension")).SetValue(true);
-            tMenu.AddItem(new MenuItem("useAllyPct", "Use on ally %")).SetValue(new Slider(50, 1));
-            tMenu.AddItem(new MenuItem("useEnemyPct", "Use on enemy %")).SetValue(new Slider(50, 1));
-            tMenu.AddItem(new MenuItem("talismanMode", "Mode: ")).SetValue(new StringList(new[] {"Always", "Combo"}));
+            var tMenu = new Menu("升华护符", "tboost");
+            tMenu.AddItem(new MenuItem("useTalisman", "使用加速")).SetValue(true);
+            tMenu.AddItem(new MenuItem("useAllyPct", "给队友 %")).SetValue(new Slider(50, 1));
+            tMenu.AddItem(new MenuItem("useEnemyPct", "给敌人 %")).SetValue(new Slider(50, 1));
+            tMenu.AddItem(new MenuItem("talismanMode", "模式: ")).SetValue(new StringList(new[] {"总是", "连招"}));
             _mainMenu.AddSubMenu(tMenu);
 
-            var bMenu = new Menu("Banner", "bannerc");
-            bMenu.AddItem(new MenuItem("useBanner", "Use Banner of Command")).SetValue(true);
+            var bMenu = new Menu("号令之旗", "bannerc");
+            bMenu.AddItem(new MenuItem("useBanner", "使用号令之旗")).SetValue(true);
             _mainMenu.AddSubMenu(bMenu);
 
-            CreateMenuItem("Wooglet's Witchcap", "Wooglets", "selfzhonya", 20, 40);
-            CreateMenuItem("Odyn's Veil", "Odyns", "selfcount", 40, 40);
+            CreateMenuItem("巫师帽", "Wooglets", "selfzhonya", 20, 40);
+            CreateMenuItem("女妖面纱", "Odyns", "selfcount", 40, 40);
 
-            var oMenu = new Menu("Oracle's Lens", "olens");
-            oMenu.AddItem(new MenuItem("useOracles", "Use on Stealth")).SetValue(true);
-            oMenu.AddItem(new MenuItem("oracleMode", "Mode: ")).SetValue(new StringList(new[] { "Always", "Combo" }));
+            var oMenu = new Menu("扫描透镜", "olens");
+            oMenu.AddItem(new MenuItem("useOracles", "使用给隐形")).SetValue(true);
+            oMenu.AddItem(new MenuItem("oracleMode", "模式: ")).SetValue(new StringList(new[] { "总是", "连招" }));
             _mainMenu.AddSubMenu(oMenu);
 
             root.AddSubMenu(_mainMenu);
@@ -278,25 +278,25 @@ namespace Oracle.Extensions
 
         private static void CreateMenuItem(string displayname, string name, string type, int hpvalue, int dmgvalue)
         {
-            var menuName = new Menu(name, name.ToLower());
-            menuName.AddItem(new MenuItem("use" + name, "Use " + displayname)).SetValue(true);
+            var menuName = new Menu(displayname, name.ToLower());
+            menuName.AddItem(new MenuItem("use" + name, "启用")).SetValue(true);
 
             if (!type.Contains("count"))
             {
-                menuName.AddItem(new MenuItem("use" + name + "Pct", "Use on HP %")).SetValue(new Slider(hpvalue));
-                menuName.AddItem(new MenuItem("use" + name + "Dmg", "Use on Dmg dealt %")).SetValue(new Slider(dmgvalue));
+                menuName.AddItem(new MenuItem("use" + name + "Pct", "血量 %")).SetValue(new Slider(hpvalue));
+                menuName.AddItem(new MenuItem("use" + name + "Dmg", "对伤害的处理 %")).SetValue(new Slider(dmgvalue));
             }
 
             if (type.Contains("count"))
-                menuName.AddItem(new MenuItem("use" + name + "Count", "Use on Count")).SetValue(new Slider(3, 1, 5));
+                menuName.AddItem(new MenuItem("use" + name + "Count", "使用计数")).SetValue(new Slider(3, 1, 5));
 
             if (!type.Contains("count"))
             {
-                menuName.AddItem(new MenuItem("use" + name + "Zhy", "Use on Dangerous (Spells)")).SetValue(false);
-                menuName.AddItem(new MenuItem("use" + name + "Ults", "Use on Dangerous (Ultimates Only)")).SetValue(true);
+                menuName.AddItem(new MenuItem("use" + name + "Zhy", "使用的危险法术")).SetValue(false);
+                menuName.AddItem(new MenuItem("use" + name + "Ults", "使用危险（大招)")).SetValue(true);
 
                 if (type.Contains("zhonya"))
-                    menuName.AddItem(new MenuItem("use" + name + "Only", "Use Only on Dangerous")).SetValue(true);
+                    menuName.AddItem(new MenuItem("use" + name + "Only", "只有危险使用")).SetValue(true);
             }
   
             _mainMenu.AddSubMenu(menuName);
