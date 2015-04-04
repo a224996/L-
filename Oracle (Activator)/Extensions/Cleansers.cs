@@ -6,39 +6,39 @@ using LeagueSharp.Common;
 
 namespace Oracle.Extensions
 {
-    internal class Cleansers
+    internal static class 净化装备
     {
         private static Menu _menuConfig, _mainMenu;
         private static readonly Obj_AI_Hero Me = ObjectManager.Player;
 
-        public void Initialize(Menu root)
+        public static void Initialize(Menu root)
         {
             Game.OnUpdate += Game_OnGameUpdate;
 
-            _mainMenu = new Menu("Cleansers", "cmenu");
-            _menuConfig = new Menu("Cleansers Config", "cconfig");
+            _mainMenu = new Menu("净化装备", "cmenu");
+            _menuConfig = new Menu("净化对象", "cconfig");
 
             foreach (var a in ObjectManager.Get<Obj_AI_Hero>().Where(a => a.Team == Me.Team))
-                _menuConfig.AddItem(new MenuItem("cccon" + a.SkinName, "Use for " + a.SkinName)).SetValue(true);
+                _menuConfig.AddItem(new MenuItem("cccon" + a.SkinName, "使用 " + a.SkinName)).SetValue(true);
             _mainMenu.AddSubMenu(_menuConfig);
 
-            CreateMenuItem("Dervish Blade", "Dervish", 2);
-            CreateMenuItem("Quicksilver Sash", "Quicksilver", 2);
-            CreateMenuItem("Mercurial Scimitar", "Mercurial", 2);
-            CreateMenuItem("Mikael's Crucible", "Mikaels", 2);
+            CreateMenuItem("苦行僧之刃", "Dervish", 2);
+            CreateMenuItem("水银饰带", "Quicksilver", 2);
+            CreateMenuItem("水银弯刀", "Mercurial", 2);
+            CreateMenuItem("坩埚", "Mikaels", 2);
 
             // delay the cleanse value * 100
-            _mainMenu.AddItem(new MenuItem("cleansedelay", "Cleanse delay ")).SetValue(new Slider(0, 0, 25));
+            _mainMenu.AddItem(new MenuItem("cleansedelay", "净化延迟 ")).SetValue(new Slider(0, 0, 25));
 
             _mainMenu.AddItem(
-                new MenuItem("cmode", "Mode: "))
-                .SetValue(new StringList(new[] {"Always", "Combo"}, 1));
+                new MenuItem("cmode", "模式: "))
+                .SetValue(new StringList(new[] {"总是", "连招"}, 1));
 
 
             root.AddSubMenu(_mainMenu);
         }
 
-        private static void Game_OnGameUpdate(EventArgs args)
+        public static void Game_OnGameUpdate(EventArgs args)
         {
             if (Oracle.Origin.Item("usecombo").GetValue<KeyBind>().Active ||
                 _mainMenu.Item("cmode").GetValue<StringList>().SelectedIndex != 1)
@@ -172,10 +172,10 @@ namespace Oracle.Extensions
 
         private static void CreateMenuItem(string displayname, string name, int ccvalue)
         {
-            var menuName = new Menu(name, name);
-            menuName.AddItem(new MenuItem("use" + name, "Use " + displayname)).SetValue(true);
-            menuName.AddItem(new MenuItem(name + "Count", "Min spells to use"));
-            menuName.AddItem(new MenuItem(name + "Duration", "Buff duration to use"));
+            var menuName = new Menu(displayname, name);
+            menuName.AddItem(new MenuItem("use" + name, "使用 " + displayname)).SetValue(true);
+            menuName.AddItem(new MenuItem(name + "Count", "最少几个技能使用"));
+            menuName.AddItem(new MenuItem(name + "Duration", "buff持续时间使用"));
             _mainMenu.AddSubMenu(menuName);
         }
     }
