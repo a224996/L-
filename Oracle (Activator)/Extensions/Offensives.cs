@@ -5,32 +5,32 @@ using LeagueSharp.Common;
 
 namespace Oracle.Extensions
 {
-    internal class Offensives
+    internal static class 进攻装备
     {
         private static Menu _mainMenu, _menuConfig;
         private static readonly Obj_AI_Hero Me = ObjectManager.Player;
 
-        public void Initialize(Menu root)
+        public static void Initialize(Menu root)
         {
             Game.OnUpdate += Game_OnGameUpdate;
 
-            _mainMenu = new Menu("Offensives", "omenu");
-            _menuConfig = new Menu("Offensives Config", "oconfig");
+            _mainMenu = new Menu("进攻装备", "omenu");
+            _menuConfig = new Menu("进攻对象", "oconfig");
 
             foreach (var x in ObjectManager.Get<Obj_AI_Hero>().Where(x => x.IsEnemy))
-                _menuConfig.AddItem(new MenuItem("ouseOn" + x.SkinName, "Use for " + x.SkinName)).SetValue(true);
+                _menuConfig.AddItem(new MenuItem("ouseOn" + x.SkinName, "使用给 " + x.SkinName)).SetValue(true);
             _mainMenu.AddSubMenu(_menuConfig);
 
-            CreateMenuItem("Muramana", "Muramana", 90, 30, true);
-            CreateMenuItem("Tiamat/Hydra", "Hydra", 90, 30);
-            CreateMenuItem("Hextech Gunblade", "Hextech", 90, 30);
-            CreateMenuItem("Youmuu's Ghostblade", "Youmuus", 90, 30);
-            CreateMenuItem("Bilgewater's Cutlass", "Cutlass", 90, 30);
-            CreateMenuItem("Blade of the Ruined King", "Botrk", 70, 70);
-            CreateMenuItem("Frost Queen's Claim", "Frostclaim", 100, 30);
-            CreateMenuItem("Sword of Divine", "Divine", 90, 30);
-            CreateMenuItem("Guardians Horn", "Guardians", 90, 30);
-            CreateMenuItem("Entropy", "Entropy", 90, 30);
+            CreateMenuItem("魔宗利刃", "Muramana", 90, 30, true);
+            CreateMenuItem("提亚马特/九头蛇", "Hydra", 90, 30);
+            CreateMenuItem("科技枪", "Hextech", 90, 30);
+            CreateMenuItem("幽梦", "Youmuus", 90, 30);
+            CreateMenuItem("弯刀", "Cutlass", 90, 30);
+            CreateMenuItem("破败", "Botrk", 70, 70);
+            CreateMenuItem("冰霜女王", "Frostclaim", 100, 30);
+            CreateMenuItem("神圣之剑", "Divine", 90, 30);
+            CreateMenuItem("守护者的号角", "Guardians", 90, 30);
+            CreateMenuItem("冰霜战锤", "Entropy", 90, 30);
 
             root.AddSubMenu(_mainMenu);
         }
@@ -168,21 +168,21 @@ namespace Oracle.Extensions
 
         private static void CreateMenuItem(string displayname, string name, int evalue, int avalue, bool usemana = false)
         {
-            var menuName = new Menu(name, name.ToLower());
+            var menuName = new Menu(displayname, name.ToLower());
 
-            menuName.AddItem(new MenuItem("use" + name, "Use " + displayname)).SetValue(true);
-            menuName.AddItem(new MenuItem("use" + name + "Pct", "Use on enemy HP %")).SetValue(new Slider(evalue));
+            menuName.AddItem(new MenuItem("use" + name, "使用 " + displayname)).SetValue(true);
+            menuName.AddItem(new MenuItem("use" + name + "Pct", "敌人血量 %")).SetValue(new Slider(evalue));
 
             if (!usemana)
-                menuName.AddItem(new MenuItem("use" + name + "Me", "Use on my HP %")).SetValue(new Slider(avalue));
+                menuName.AddItem(new MenuItem("use" + name + "Me", "自己血量 %")).SetValue(new Slider(avalue));
 
             if (usemana)
-                menuName.AddItem(new MenuItem("use" + name + "Mana", "Minimum mana % to use")).SetValue(new Slider(35));
+                menuName.AddItem(new MenuItem("use" + name + "Mana", "最小的法力%使用")).SetValue(new Slider(35));
 
 
             if (name == "Muramana")
                 menuName.AddItem(
-                    new MenuItem("muraMode", " Muramana Mode: ").SetValue(new StringList(new[] {"Always", "Combo"}, 1)));
+                    new MenuItem("muraMode", " 模式: ").SetValue(new StringList(new[] {"总是", "连招"}, 1)));
 
             _mainMenu.AddSubMenu(menuName);
         }
