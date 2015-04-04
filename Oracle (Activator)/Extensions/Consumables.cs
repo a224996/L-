@@ -4,22 +4,22 @@ using LeagueSharp.Common;
 
 namespace Oracle.Extensions
 {
-    internal class Consumables
+    internal static class 药瓶
     {
         private static Menu _mainMenu;
         private static readonly Obj_AI_Hero Me = ObjectManager.Player;
 
-        public void Initialize(Menu root)
+        public static void Initialize(Menu root)
         {
             Game.OnUpdate += Game_OnGameUpdate;
 
-            _mainMenu = new Menu("Consumables", "imenu");
+            _mainMenu = new Menu("药瓶", "imenu");
 
-            CreateMenuItem("Biscuit", "BiscuitHealthMana", 45, 35);
-            CreateMenuItem("Mana Potion", "Mana", 45, 0);
-            CreateMenuItem("Crystaline Flask", "FlaskHealthMana", 45, 35);
-            CreateMenuItem("Health Potion", "Health", 45, 45);
-            CreateMenuItem("Red Elixir", "ElixirHealth,", 20, 45);
+            CreateMenuItem("饼干", "BiscuitHealthMana", 45, 35);
+            CreateMenuItem("蓝药", "Mana", 45, 0);
+            CreateMenuItem("水晶瓶", "FlaskHealthMana", 45, 35);
+            CreateMenuItem("红药", "Health", 45, 45);
+            CreateMenuItem("大红药", "ElixirHealth,", 20, 45);
 
             root.AddSubMenu(_mainMenu);
         }
@@ -82,16 +82,16 @@ namespace Oracle.Extensions
         private static void CreateMenuItem(string name, string menuvar, int dvalue, int dmgvalue)
         {
             var menuName = new Menu(name, "m" + menuvar);
-            menuName.AddItem(new MenuItem("use" + menuvar, "Use " + name)).SetValue(true);
+            menuName.AddItem(new MenuItem("use" + menuvar, "使用 " + name)).SetValue(true);
 
             if (menuvar.Contains("Health"))
             {
-                menuName.AddItem(new MenuItem("use" + menuvar + "Pct", "Use on HP %")).SetValue(new Slider(dvalue));
-                menuName.AddItem(new MenuItem("use" + menuvar + "Dmg", "Use on Dmg dealt %")).SetValue(new Slider(dmgvalue));
+                menuName.AddItem(new MenuItem("use" + menuvar + "Pct", "血量 %")).SetValue(new Slider(dvalue));
+                menuName.AddItem(new MenuItem("use" + menuvar + "Dmg", "伤害处理 %")).SetValue(new Slider(dmgvalue));
             }
 
             if (menuvar.Contains("Mana"))
-                menuName.AddItem(new MenuItem("use" + menuvar + "Mana", "Use on Mana %")).SetValue(new Slider(40));
+                menuName.AddItem(new MenuItem("use" + menuvar + "Mana", "蓝量 %")).SetValue(new Slider(40));
 
             _mainMenu.AddSubMenu(menuName);
         }
